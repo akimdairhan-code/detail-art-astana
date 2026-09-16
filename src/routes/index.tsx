@@ -617,7 +617,7 @@ function Index() {
           <div className="surface-panel mt-10 overflow-hidden rounded-lg">
             <iframe
               title="Карта — APELSIN DETAILING, Астана"
-              src="https://www.openstreetmap.org/export/embed.html?bbox=71.39%2C51.10%2C71.47%2C51.14&layer=mapnik&marker=51.1225%2C71.4300"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=71.46%2C51.19%2C71.54%2C51.23&layer=mapnik&marker=51.207227%2C71.497783"
               className="h-[420px] w-full border-0"
               loading="lazy"
             />
