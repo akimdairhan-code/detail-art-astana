@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
-
 import {
   Sparkles,
   ShieldCheck,
@@ -36,7 +35,10 @@ export const Route = createFileRoute("/")({
         content:
           "APELSIN Industrial Park, Астана, Алаш 46/2: детейлинг легковых машин и грузовых фур — полировка, керамика, химчистка, защитные плёнки.",
       },
-      { property: "og:title", content: "APELSIN DETAILING — детейлинг легковых авто и фур в Астане" },
+      {
+        property: "og:title",
+        content: "APELSIN DETAILING — детейлинг легковых авто и фур в Астане",
+      },
       {
         property: "og:description",
         content:
@@ -147,15 +149,7 @@ const reviews = [
   },
 ];
 
-function BeforeAfter({
-  before,
-  after,
-  label,
-}: {
-  before: string;
-  after: string;
-  label: string;
-}) {
+function BeforeAfter({ before, after, label }: { before: string; after: string; label: string }) {
   const [pos, setPos] = useState(50);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -182,10 +176,7 @@ function BeforeAfter({
           height={700}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div
-          className="absolute inset-0"
-          style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        >
+        <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
           <img
             src={before}
             alt={`${label} — до`}
@@ -196,10 +187,7 @@ function BeforeAfter({
           />
         </div>
 
-        <div
-          className="absolute inset-y-0 w-0.5 bg-primary"
-          style={{ left: `${pos}%` }}
-        >
+        <div className="absolute inset-y-0 w-0.5 bg-primary" style={{ left: `${pos}%` }}>
           <span className="absolute top-1/2 left-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
             ↔
           </span>
@@ -255,6 +243,8 @@ function BookingForm() {
     setStatus("sending");
     setError(null);
 
+    const whatsappWindow = window.open("", "_blank", "noopener,noreferrer");
+
     const { error: dbError } = await supabase.from("bookings").insert({
       name: d.name,
       phone: d.phone,
@@ -264,6 +254,7 @@ function BookingForm() {
     });
 
     if (dbError) {
+      whatsappWindow?.close();
       setStatus("error");
       setError("Не удалось сохранить заявку. Попробуйте ещё раз или напишите нам в WhatsApp.");
       return;
@@ -279,10 +270,11 @@ function BookingForm() {
     ].filter(Boolean);
 
     const url = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent(lines.join("\n"))}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    if (whatsappWindow) window.location.href = url;
+    else window.open(url, "_blank", "noopener,noreferrer");
+
     setStatus("sent");
   };
-
 
   if (status === "sent") {
     return (
@@ -290,13 +282,10 @@ function BookingForm() {
         <Check className="mx-auto h-10 w-10 text-primary" />
         <h3 className="mt-4 text-2xl">Заявка отправлена в WhatsApp</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          {form.name}, ваша заявка открыта в WhatsApp менеджера — отправьте сообщение, и мы перезвоним на{" "}
-          {form.phone} в течение 15 минут.
+          {form.name}, ваша заявка открыта в WhatsApp менеджера — отправьте сообщение, и мы
+          перезвоним на {form.phone} в течение 15 минут.
         </p>
-        <button
-          onClick={() => setStatus("idle")}
-          className="mt-6 text-sm text-primary underline"
-        >
+        <button onClick={() => setStatus("idle")} className="mt-6 text-sm text-primary underline">
           Отправить ещё одну заявку
         </button>
       </div>
@@ -349,7 +338,10 @@ function BookingForm() {
         ))}
       </select>
       {status === "error" && error && (
-        <p role="alert" className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <p
+          role="alert"
+          className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
           {error}
         </p>
       )}
@@ -366,7 +358,6 @@ function BookingForm() {
     </form>
   );
 }
-
 
 function Index() {
   const nav = [
@@ -409,8 +400,7 @@ function Index() {
         <div className="relative mx-auto max-w-6xl px-4 py-28 sm:py-36">
           <p className="eyebrow">Астана · Apelsin Industrial Park · Алаш 46/2</p>
           <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl">
-            Детейлинг легковых авто и
-            <span className="text-primary"> грузовых фур</span>
+            Детейлинг легковых авто и<span className="text-primary"> грузовых фур</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-muted-foreground">
             APELSIN DETAILING — часть Apelsin Industrial Park. Керамика, полировка, химчистка и
@@ -470,8 +460,8 @@ function Index() {
           <p className="eyebrow">Цены</p>
           <h2 className="mt-3 text-4xl sm:text-5xl">Пакеты и стоимость</h2>
           <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-            Цены указаны для седанов. Для кроссоверов и внедорожников +15–25%. Точную смету
-            считаем после осмотра лака толщиномером.
+            Цены указаны для седанов. Для кроссоверов и внедорожников +15–25%. Точную смету считаем
+            после осмотра лака толщиномером.
           </p>
           <div className="mt-12 grid gap-5 lg:grid-cols-3">
             {pricing.map((p) => (
@@ -563,8 +553,8 @@ function Index() {
             <h2 className="mt-3 text-4xl sm:text-5xl">Apelsin Industrial Park</h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Собственный производственный комплекс с высокими боксами: сюда заезжают и легковые
-              авто, и грузовые фуры с прицепами. Рядом — сервисные направления Apelsin: Truck,
-              Moto, Construct и Shop, поэтому машину можно привести в порядок в одном месте.
+              авто, и грузовые фуры с прицепами. Рядом — сервисные направления Apelsin: Truck, Moto,
+              Construct и Shop, поэтому машину можно привести в порядок в одном месте.
             </p>
             <ul className="mt-8 space-y-3 text-sm text-muted-foreground">
               {[
@@ -641,7 +631,8 @@ function Index() {
             APELSIN<span className="text-primary">.</span>DETAILING
           </p>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Apelsin Industrial Park · Астана, Алаш 46/2. Все права защищены.
+            © {new Date().getFullYear()} Apelsin Industrial Park · Астана, Алаш 46/2. Все права
+            защищены.
           </p>
         </div>
       </footer>
