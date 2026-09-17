@@ -270,7 +270,7 @@ function BookingForm() {
     ].filter(Boolean);
 
     const url = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent(lines.join("\n"))}`;
-    if (whatsappWindow) window.location.href = url;
+    if (whatsappWindow) whatsappWindow.location.href = url;
     else window.open(url, "_blank", "noopener,noreferrer");
 
     setStatus("sent");
