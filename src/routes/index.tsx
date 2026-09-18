@@ -131,23 +131,7 @@ const pricing = [
   },
 ];
 
-const reviews = [
-  {
-    name: "Алишер К.",
-    car: "Toyota Land Cruiser 300",
-    text: "Делал керамику перед зимой. Кузов держит грязь минимально, мойка стала в разы проще. Отчёт по этапам скидывали в WhatsApp.",
-  },
-  {
-    name: "Динара С.",
-    car: "Lexus RX",
-    text: "Салон после ребёнка выглядел печально. Забрала машину — как из салона, запаха нет вообще. Приятно, что уложились в срок.",
-  },
-  {
-    name: "Ержан М.",
-    car: "BMW 5 G30",
-    text: "Полировка убрала все паутинки, чёрный цвет наконец глубокий. Отдельно спасибо за защиту дисков.",
-  },
-];
+const reviews: { name: string; car: string; text: string }[] = [];
 
 function BeforeAfter({ before, after, label }: { before: string; after: string; label: string }) {
   const [pos, setPos] = useState(50);
@@ -527,22 +511,37 @@ function Index() {
         <div className="mx-auto max-w-6xl px-4 py-24">
           <p className="eyebrow">Отзывы</p>
           <h2 className="mt-3 text-4xl sm:text-5xl">Что говорят клиенты</h2>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {reviews.map((r) => (
-              <article key={r.name} className="surface-panel rounded-lg p-6">
-                <div className="flex gap-1 text-primary">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-current" />
-                  ))}
-                </div>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{r.text}</p>
-                <footer className="mt-6 border-t border-border pt-4">
-                  <p className="font-semibold">{r.name}</p>
-                  <p className="text-xs tracking-wider text-muted-foreground uppercase">{r.car}</p>
-                </footer>
-              </article>
-            ))}
-          </div>
+          {reviews.length > 0 ? (
+            <div className="mt-12 grid gap-5 md:grid-cols-3">
+              {reviews.map((r) => (
+                <article key={r.name} className="surface-panel rounded-lg p-6">
+                  <div className="flex gap-1 text-primary">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{r.text}</p>
+                  <footer className="mt-6 border-t border-border pt-4">
+                    <p className="font-semibold">{r.name}</p>
+                    <p className="text-xs tracking-wider text-muted-foreground uppercase">
+                      {r.car}
+                    </p>
+                  </footer>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="surface-panel mt-12 rounded-lg p-10 text-center">
+              <div className="flex justify-center gap-1 text-muted-foreground/40">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-4 w-4" />
+                ))}
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                Мы только начинаем собирать отзывы клиентов — первые появятся здесь совсем скоро.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
