@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -211,12 +211,18 @@ function BookingForm() {
     service: "Керамическое покрытие",
     date: "",
   });
+  const [consent, setConsent] = useState(false);
 
   const field =
     "w-full rounded-md border border-input bg-secondary px-4 py-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consent) {
+      setStatus("error");
+      setError("Подтвердите согласие на обработку персональных данных");
+      return;
+    }
     const parsed = bookingSchema.safeParse(form);
     if (!parsed.success) {
       setStatus("error");
@@ -321,6 +327,23 @@ function BookingForm() {
           </option>
         ))}
       </select>
+      <label className="flex items-start gap-3 text-xs text-muted-foreground">
+        <input
+          type="checkbox"
+          required
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-input accent-primary"
+        />
+        <span>
+          Я согласен(на) на обработку указанных персональных данных (имя, телефон и данные об авто)
+          в соответствии с{" "}
+          <Link to="/privacy" className="text-primary hover:underline">
+            политикой конфиденциальности
+          </Link>{" "}
+          — они будут использованы для оформления и обработки заявки на детейлинг.
+        </span>
+      </label>
       {status === "error" && error && (
         <p
           role="alert"
@@ -336,9 +359,6 @@ function BookingForm() {
       >
         {status === "sending" ? "Отправляем в WhatsApp…" : "Отправить заявку в WhatsApp"}
       </button>
-      <p className="text-center text-xs text-muted-foreground">
-        Нажимая кнопку, вы соглашаетесь на обработку персональных данных.
-      </p>
     </form>
   );
 }
@@ -629,10 +649,15 @@ function Index() {
           <p className="font-display text-xl tracking-widest">
             APELSIN<span className="text-primary">.</span>DETAILING
           </p>
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Apelsin Industrial Park · Астана, Алаш 46/2. Все права
-            защищены.
-          </p>
+          <div className="flex flex-col items-start gap-1 text-xs text-muted-foreground sm:items-end">
+            <p>
+              © {new Date().getFullYear()} Apelsin Industrial Park · Астана, Алаш 46/2. Все права
+              защищены.
+            </p>
+            <Link to="/privacy" className="hover:text-primary">
+              Политика конфиденциальности
+            </Link>
+          </div>
         </div>
       </footer>
 
