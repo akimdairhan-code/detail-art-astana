@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { MANAGER_PHONE, PHONE, WHATSAPP } from "@/lib/business-info";
 
 import {
   Sparkles,
@@ -50,10 +51,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const MANAGER_PHONE = "77771234567";
-const WHATSAPP = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent("Здравствуйте! Хочу записаться на детейлинг")}`;
-const PHONE = "+7 777 123 45 67";
 
 const services = [
   {

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PHONE } from "@/lib/business-info";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -13,8 +14,6 @@ export const Route = createFileRoute("/privacy")({
   }),
   component: PrivacyPolicy,
 });
-
-const PHONE = "+7 777 123 45 67";
 
 function PrivacyPolicy() {
   return (
