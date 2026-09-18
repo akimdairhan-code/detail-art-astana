@@ -230,7 +230,8 @@ function BookingForm() {
     setStatus("sending");
     setError(null);
 
-    const whatsappWindow = window.open("", "_blank", "noopener,noreferrer");
+    const whatsappWindow = window.open("", "_blank");
+    if (whatsappWindow) whatsappWindow.opener = null;
 
     const { error: dbError } = await supabase.from("bookings").insert({
       name: d.name,
