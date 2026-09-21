@@ -473,7 +473,7 @@ function Index() {
       <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase 2xl:flex">
         Реклама
       </div>
-      <header className="sticky top-0 z-40 border-b border-border bg-background/30 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <a
             href="#top"
@@ -517,8 +517,7 @@ function Index() {
           <h1
             className={`mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:120ms]" : "opacity-0"}`}
           >
-            Детейлинг легковых авто и
-            <span className="text-primary"> грузовых фур</span>
+            Детейлинг легковых авто и<span className="text-primary"> грузовых фур</span>
           </h1>
           <p
             className={`mt-6 max-w-xl text-lg text-muted-foreground ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:180ms]" : "opacity-0"}`}
