@@ -81,7 +81,7 @@ function useReveal<T extends HTMLElement>() {
   return { ref, className: visible ? "reveal reveal-visible" : "reveal" };
 }
 
-const PRELOAD_HOLD_MS = 600;
+const PRELOAD_HOLD_MS = 100;
 const PRELOAD_FADE_MS = 250;
 
 function Preloader({ onDone }: { onDone: () => void }) {
@@ -473,7 +473,7 @@ function Index() {
       <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase 2xl:flex">
         Реклама
       </div>
-      <header className="sticky top-0 z-40 border-b border-border bg-background/30 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <a
             href="#top"
