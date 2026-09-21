@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { MANAGER_PHONE, PHONE, WHATSAPP } from "@/lib/business-info";
@@ -18,9 +18,11 @@ import {
   Check,
   MessageCircle,
   Truck,
+  ArrowLeftRight,
 } from "lucide-react";
 
 import heroImg from "@/assets/hero-detailing.jpg";
+import apelsinLogo from "@/assets/apelsin-logo.png";
 import beforePaint from "@/assets/before-paint.jpg";
 import afterPaint from "@/assets/after-paint.jpg";
 import beforeInterior from "@/assets/before-interior.jpg";
@@ -51,6 +53,71 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -10% 0px" },
+    );
+    observer.observe(el);
+    const fallback = setTimeout(() => setVisible(true), 3000);
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
+  }, []);
+
+  return { ref, className: visible ? "reveal reveal-visible" : "reveal" };
+}
+
+const PRELOAD_HOLD_MS = 600;
+const PRELOAD_FADE_MS = 250;
+
+function Preloader({ onDone }: { onDone: () => void }) {
+  const [mounted, setMounted] = useState(true);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const holdTimer = setTimeout(() => setFading(true), PRELOAD_HOLD_MS);
+    return () => clearTimeout(holdTimer);
+  }, []);
+
+  useEffect(() => {
+    if (!fading) return;
+    const fadeTimer = setTimeout(() => {
+      setMounted(false);
+      document.body.style.overflow = "";
+      onDone();
+    }, PRELOAD_FADE_MS);
+    return () => clearTimeout(fadeTimer);
+  }, [fading, onDone]);
+
+  if (!mounted) return null;
+
+  return (
+    <div
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-background transition-opacity duration-[600ms] ease-out ${fading ? "opacity-0" : "opacity-100"}`}
+    >
+      <img
+        src={apelsinLogo}
+        alt="APELSIN DETAILING"
+        className="h-24 w-24 animate-spin rounded-full object-cover [animation-duration:1.4s]"
+      />
+    </div>
+  );
+}
 
 const services = [
   {
@@ -132,6 +199,7 @@ const reviews: { name: string; car: string; text: string }[] = [];
 
 function BeforeAfter({ before, after, label }: { before: string; after: string; label: string }) {
   const [pos, setPos] = useState(50);
+  const [dragging, setDragging] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const move = (clientX: number) => {
@@ -141,13 +209,21 @@ function BeforeAfter({ before, after, label }: { before: string; after: string; 
     setPos(Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100)));
   };
 
+  const transition = dragging ? "" : "transition-[clip-path,left] duration-500 ease-out";
+
   return (
     <figure className="surface-panel overflow-hidden rounded-lg">
       <div
         ref={ref}
         className="relative aspect-4/3 cursor-ew-resize select-none"
         onPointerMove={(e) => e.buttons === 1 && move(e.clientX)}
-        onPointerDown={(e) => move(e.clientX)}
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          setDragging(true);
+          move(e.clientX);
+        }}
+        onPointerUp={() => setDragging(false)}
+        onPointerCancel={() => setDragging(false)}
       >
         <img
           src={after}
@@ -155,22 +231,30 @@ function BeforeAfter({ before, after, label }: { before: string; after: string; 
           loading="lazy"
           width={900}
           height={700}
+          draggable={false}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
+        <div
+          className={`absolute inset-0 ${transition}`}
+          style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+        >
           <img
             src={before}
             alt={`${label} — до`}
             loading="lazy"
             width={900}
             height={700}
+            draggable={false}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
 
-        <div className="absolute inset-y-0 w-0.5 bg-primary" style={{ left: `${pos}%` }}>
-          <span className="absolute top-1/2 left-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-            ↔
+        <div
+          className={`absolute inset-y-0 w-0.5 bg-primary ${transition}`}
+          style={{ left: `${pos}%` }}
+        >
+          <span className="absolute top-1/2 left-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-white">
+            <ArrowLeftRight className="h-8 w-8" strokeWidth={3} />
           </span>
         </div>
         <span className="absolute top-3 left-3 rounded bg-background/80 px-2 py-1 text-xs font-semibold tracking-widest uppercase">
@@ -370,16 +454,41 @@ function Index() {
     ["Контакты", "#contacts"],
   ];
 
+  const [ready, setReady] = useState(false);
+
+  const servicesReveal = useReveal<HTMLElement>();
+  const pricingReveal = useReveal<HTMLElement>();
+  const galleryReveal = useReveal<HTMLElement>();
+  const reviewsReveal = useReveal<HTMLElement>();
+  const bookingReveal = useReveal<HTMLElement>();
+  const contactsReveal = useReveal<HTMLElement>();
+  const footerReveal = useReveal<HTMLElement>();
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+      {!ready && <Preloader onDone={() => setReady(true)} />}
+      <div className="fixed top-1/2 left-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase 2xl:flex">
+        Реклама
+      </div>
+      <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase 2xl:flex">
+        Реклама
+      </div>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/30 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <a href="#top" className="font-display text-2xl tracking-widest">
+          <a
+            href="#top"
+            className={`font-display text-2xl tracking-widest ${ready ? "animate-[fade-in-up_0.6s_ease_both]" : "opacity-0"}`}
+          >
             APELSIN<span className="text-primary">.</span>DETAILING
           </a>
-          <nav className="hidden gap-7 text-sm font-medium text-muted-foreground lg:flex">
+          <nav className="hidden gap-15 text-sm font-normal text-muted-foreground lg:flex">
             {nav.map(([label, href]) => (
-              <a key={href} href={href} className="transition-colors hover:text-primary">
+              <a
+                key={href}
+                href={href}
+                className="transition-colors hover:text-primary"
+                style={{ WebkitTextStroke: "0.5px currentColor" }}
+              >
                 {label}
               </a>
             ))}
@@ -400,16 +509,27 @@ function Index() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/25" />
         <div className="relative mx-auto max-w-6xl px-4 py-28 sm:py-36">
-          <p className="eyebrow">Астана · Apelsin Industrial Park · Алаш 46/2</p>
-          <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl">
-            Детейлинг легковых авто и<span className="text-primary"> грузовых фур</span>
+          <p
+            className={`eyebrow ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:60ms]" : "opacity-0"}`}
+          >
+            Астана · Apelsin Industrial Park · Алаш 46/2
+          </p>
+          <h1
+            className={`mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:120ms]" : "opacity-0"}`}
+          >
+            Детейлинг легковых авто и
+            <span className="text-primary"> грузовых фур</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+          <p
+            className={`mt-6 max-w-xl text-lg text-muted-foreground ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:180ms]" : "opacity-0"}`}
+          >
             APELSIN DETAILING — часть Apelsin Industrial Park. Керамика, полировка, химчистка и
             защитные плёнки в тёплых боксах: принимаем и седаны, и тягачи с прицепами. Совершенство
             в каждой детали.
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div
+            className={`mt-9 flex flex-wrap gap-3 ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:240ms]" : "opacity-0"}`}
+          >
             <a href="#booking" className="btn-ember rounded-md px-8 py-4 text-sm">
               Запись онлайн
             </a>
@@ -422,7 +542,9 @@ function Index() {
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </a>
           </div>
-          <dl className="mt-14 grid max-w-2xl grid-cols-2 gap-6 sm:grid-cols-4">
+          <dl
+            className={`mt-14 grid max-w-2xl grid-cols-2 gap-6 sm:grid-cols-4 ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:300ms]" : "opacity-0"}`}
+          >
             {[
               ["1 200+", "авто в год"],
               ["9 лет", "на рынке"],
@@ -438,26 +560,36 @@ function Index() {
         </div>
       </section>
 
-      <section id="services" className="mx-auto max-w-6xl px-4 py-24">
+      <section
+        id="services"
+        ref={servicesReveal.ref}
+        className={`mx-auto max-w-6xl px-4 py-24 ${servicesReveal.className}`}
+      >
         <p className="eyebrow">Услуги</p>
         <h2 className="mt-3 text-4xl sm:text-5xl">Что делаем в боксах</h2>
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {services.map(({ icon: Icon, title, text }) => (
             <article
               key={title}
-              className="surface-panel group rounded-lg p-6 transition-colors hover:border-primary"
+              className="surface-panel group rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.05] hover:border-primary hover:shadow-[var(--shadow-panel)]"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary">
-                <Icon className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                <Icon className="h-6 w-6 transition-transform duration-300 group-hover:rotate-6" />
               </div>
-              <h3 className="mt-5 text-2xl">{title}</h3>
+              <h3 className="mt-5 text-2xl transition-colors duration-300 group-hover:text-primary">
+                {title}
+              </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section id="pricing" className="diag-stripes border-y border-border bg-graphite/40">
+      <section
+        id="pricing"
+        ref={pricingReveal.ref}
+        className={`diag-stripes border-y border-border bg-graphite/40 ${pricingReveal.className}`}
+      >
         <div className="mx-auto max-w-6xl px-4 py-24">
           <p className="eyebrow">Цены</p>
           <h2 className="mt-3 text-4xl sm:text-5xl">Пакеты и стоимость</h2>
@@ -469,7 +601,7 @@ function Index() {
             {pricing.map((p) => (
               <article
                 key={p.name}
-                className={`surface-panel relative rounded-lg p-7 ${p.popular ? "border-primary" : ""}`}
+                className={`surface-panel relative flex h-full flex-col rounded-lg p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[var(--shadow-panel)] ${p.popular ? "border-primary" : ""}`}
               >
                 {p.popular && (
                   <span className="absolute -top-3 left-7 rounded bg-primary px-3 py-1 text-xs font-bold tracking-widest text-primary-foreground uppercase">
@@ -481,7 +613,7 @@ function Index() {
                   <Clock className="h-3.5 w-3.5" /> {p.time}
                 </p>
                 <p className="font-display mt-5 text-4xl text-primary">{p.price}</p>
-                <ul className="mt-6 space-y-3 text-sm">
+                <ul className="mt-6 mb-6 space-y-3 text-sm">
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2 text-muted-foreground">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -491,7 +623,7 @@ function Index() {
                 </ul>
                 <a
                   href="#booking"
-                  className={`mt-7 block rounded-md px-5 py-3 text-center text-xs font-semibold tracking-widest uppercase ${
+                  className={`mt-auto block rounded-md px-5 py-3 text-center text-xs font-semibold tracking-widest uppercase ${
                     p.popular
                       ? "btn-ember"
                       : "border border-border transition-colors hover:border-primary hover:text-primary"
@@ -505,7 +637,11 @@ function Index() {
         </div>
       </section>
 
-      <section id="gallery" className="mx-auto max-w-6xl px-4 py-24">
+      <section
+        id="gallery"
+        ref={galleryReveal.ref}
+        className={`mx-auto max-w-6xl px-4 py-24 ${galleryReveal.className}`}
+      >
         <p className="eyebrow">Наши работы</p>
         <h2 className="mt-3 text-4xl sm:text-5xl">До и после</h2>
         <p className="mt-3 text-sm text-muted-foreground">
@@ -525,7 +661,11 @@ function Index() {
         </div>
       </section>
 
-      <section id="reviews" className="border-y border-border bg-graphite/40">
+      <section
+        id="reviews"
+        ref={reviewsReveal.ref}
+        className={`border-y border-border bg-graphite/40 ${reviewsReveal.className}`}
+      >
         <div className="mx-auto max-w-6xl px-4 py-24">
           <p className="eyebrow">Отзывы</p>
           <h2 className="mt-3 text-4xl sm:text-5xl">Что говорят клиенты</h2>
@@ -597,7 +737,11 @@ function Index() {
         </div>
       </section>
 
-      <section id="booking" className="mx-auto max-w-6xl px-4 py-24">
+      <section
+        id="booking"
+        ref={bookingReveal.ref}
+        className={`mx-auto max-w-6xl px-4 py-24 ${bookingReveal.className}`}
+      >
         <div className="grid gap-10 lg:grid-cols-2">
           <div>
             <p className="eyebrow">Запись</p>
@@ -627,7 +771,11 @@ function Index() {
         </div>
       </section>
 
-      <section id="contacts" className="border-t border-border">
+      <section
+        id="contacts"
+        ref={contactsReveal.ref}
+        className={`border-t border-border ${contactsReveal.className}`}
+      >
         <div className="mx-auto max-w-6xl px-4 py-24">
           <p className="eyebrow">Карта</p>
           <h2 className="mt-3 text-4xl sm:text-5xl">Как нас найти</h2>
@@ -642,7 +790,10 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border bg-graphite/50">
+      <footer
+        ref={footerReveal.ref}
+        className={`border-t border-border bg-graphite/50 ${footerReveal.className}`}
+      >
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-display text-xl tracking-widest">
             APELSIN<span className="text-primary">.</span>DETAILING
