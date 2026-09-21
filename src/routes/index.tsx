@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "@/assets/hero-detailing.jpg";
-import apelsinLogo from "@/assets/apelsin-logo.png";
+import apelsinLogo from "@/assets/apelsin-logo.webp";
 import beforePaint from "@/assets/before-paint.jpg";
 import afterPaint from "@/assets/after-paint.jpg";
 import beforeInterior from "@/assets/before-interior.jpg";
