@@ -18,6 +18,11 @@ dist-ssr
 
 repomix-output.xml
 
+# Env files
+.env
+.env.*
+!.env.example
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
