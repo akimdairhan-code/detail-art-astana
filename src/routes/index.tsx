@@ -113,7 +113,7 @@ function Preloader({ onDone }: { onDone: () => void }) {
       <img
         src={apelsinLogo}
         alt="APELSIN DETAILING"
-        className="h-24 w-24 animate-spin rounded-full object-cover [animation-duration:1.4s]"
+        className="h-16 w-16 animate-spin rounded-full object-cover [animation-duration:1.4s]"
       />
     </div>
   );
@@ -455,6 +455,17 @@ function Index() {
   ];
 
   const [ready, setReady] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [headerElevated, setHeaderElevated] = useState(false);
+
+  useEffect(() => {
+    if (menuOpen) {
+      setHeaderElevated(true);
+      return;
+    }
+    const t = setTimeout(() => setHeaderElevated(false), 300);
+    return () => clearTimeout(t);
+  }, [menuOpen]);
 
   const servicesReveal = useReveal<HTMLElement>();
   const pricingReveal = useReveal<HTMLElement>();
@@ -467,13 +478,15 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       {!ready && <Preloader onDone={() => setReady(true)} />}
-      <div className="fixed top-1/2 left-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase 2xl:flex">
+      <div className="fixed top-1/2 left-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase min-[1700px]:flex">
         Реклама
       </div>
-      <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase 2xl:flex">
+      <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase min-[1700px]:flex">
         Реклама
       </div>
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
+      <header
+        className={`sticky top-0 border-b border-border bg-background/80 backdrop-blur ${headerElevated ? "z-[130]" : "z-40"}`}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <a
             href="#top"
@@ -481,23 +494,95 @@ function Index() {
           >
             APELSIN<span className="text-primary">.</span>DETAILING
           </a>
-          <nav className="hidden gap-15 text-sm font-normal text-muted-foreground lg:flex">
-            {nav.map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                className="transition-colors hover:text-primary"
-                style={{ WebkitTextStroke: "0.5px currentColor" }}
-              >
-                {label}
-              </a>
-            ))}
+          <nav className="hidden gap-20 text-sm font-normal whitespace-nowrap text-muted-foreground lg:flex">
+            {nav.map(([label, href]) =>
+              label === "Услуги" ? (
+                <div key={href} className="group relative">
+                  <a
+                    href={href}
+                    className="group/link relative flex items-center gap-1 transition-colors hover:text-primary"
+                    style={{ WebkitTextStroke: "0.5px currentColor" }}
+                  >
+                    {label}
+                    <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-primary transition-transform duration-150 ease-out group-hover/link:scale-x-100" />
+                  </a>
+                  <div className="invisible absolute top-full left-1/2 z-50 w-64 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                    <div className="surface-panel rounded-lg py-2 shadow-[var(--shadow-panel)]">
+                      {services.map((s) => (
+                        <a
+                          key={s.title}
+                          href="#services"
+                          className="group/item relative block px-5 py-2.5 text-sm text-foreground transition-colors hover:bg-graphite hover:text-primary"
+                        >
+                          {s.title}
+                          <span className="absolute bottom-1 left-5 h-px w-[calc(100%-2.5rem)] origin-left scale-x-0 bg-primary transition-transform duration-150 ease-out group-hover/item:scale-x-100" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <a
+                  key={href}
+                  href={href}
+                  className="group/link relative transition-colors hover:text-primary"
+                  style={{ WebkitTextStroke: "0.5px currentColor" }}
+                >
+                  {label}
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-primary transition-transform duration-150 ease-out group-hover/link:scale-x-100" />
+                </a>
+              ),
+            )}
           </nav>
-          <a href="#booking" className="btn-ember rounded-md px-5 py-2.5 text-xs">
-            Записаться
-          </a>
+          <button
+            type="button"
+            aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="relative z-[120] flex h-10 w-10 items-center justify-center rounded-md border border-border text-foreground"
+          >
+            <span className="relative flex h-4 w-5 flex-col justify-between">
+              <span
+                className={`h-0.5 w-full origin-center rounded-full bg-current transition-transform duration-300 ease-out ${menuOpen ? "translate-y-[7px] rotate-45" : ""}`}
+              />
+              <span
+                className={`h-0.5 w-full rounded-full bg-current transition-all duration-200 ease-out ${menuOpen ? "scale-x-0 opacity-0" : "opacity-100"}`}
+              />
+              <span
+                className={`h-0.5 w-full origin-center rounded-full bg-current transition-transform duration-300 ease-out ${menuOpen ? "-translate-y-[7px] -rotate-45" : ""}`}
+              />
+            </span>
+          </button>
         </div>
       </header>
+
+      <div
+        className={`fixed inset-0 z-[110] bg-background/60 backdrop-blur-sm transition-opacity duration-300 ${
+          menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
+      <div
+        className={`fixed top-0 right-0 z-[115] flex h-full w-full max-w-[280px] flex-col overflow-y-auto border-l border-border bg-background p-8 pt-24 transition-transform duration-300 ease-out ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <nav className="flex flex-col gap-1 text-lg">
+          {["Грузовые", "Мото"].map((label) => (
+            <a
+              key={label}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setMenuOpen(false);
+              }}
+              className="rounded-md px-3 py-3 transition-colors hover:bg-graphite hover:text-primary"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
 
       <section id="top" className="relative overflow-hidden">
         <img
@@ -517,7 +602,7 @@ function Index() {
           <h1
             className={`mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:120ms]" : "opacity-0"}`}
           >
-            Детейлинг легковых авто и
+            Детейлинг
             <span className="text-primary"> грузовых фур</span>
           </h1>
           <p
