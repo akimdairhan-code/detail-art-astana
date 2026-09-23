@@ -83,15 +83,23 @@ function useReveal<T extends HTMLElement>() {
 
 const PRELOAD_HOLD_MS = 600;
 const PRELOAD_FADE_MS = 250;
+const PRELOADER_SESSION_KEY = "apelsin-preloader-shown";
 
 function Preloader({ onDone }: { onDone: () => void }) {
   const [mounted, setMounted] = useState(true);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    if (sessionStorage.getItem(PRELOADER_SESSION_KEY) === "1") {
+      setMounted(false);
+      onDone();
+      return;
+    }
+    sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
     document.body.style.overflow = "hidden";
     const holdTimer = setTimeout(() => setFading(true), PRELOAD_HOLD_MS);
     return () => clearTimeout(holdTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount; onDone identity is irrelevant here
   }, []);
 
   useEffect(() => {
