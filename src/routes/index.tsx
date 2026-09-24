@@ -623,7 +623,7 @@ function Index() {
             className={`mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:120ms]" : "opacity-0"}`}
           >
             Детейлинг
-            <span className="text-primary"> грузовых фур</span>
+            <span className="text-primary"> авто, фур и мото</span>
           </h1>
           <p
             className={`mt-6 max-w-xl text-lg text-muted-foreground ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:180ms]" : "opacity-0"}`}
