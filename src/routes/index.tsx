@@ -109,7 +109,8 @@ function Preloader({ onDone }: { onDone: () => void }) {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center bg-background transition-opacity duration-[600ms] ease-out ${fading ? "opacity-0" : "opacity-100"}`}
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-background transition-opacity ease-out ${fading ? "opacity-0" : "opacity-100"}`}
+      style={{ transitionDuration: `${PRELOAD_FADE_MS}ms` }}
     >
       <img
         src={apelsinLogo}
