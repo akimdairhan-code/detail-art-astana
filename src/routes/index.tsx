@@ -19,6 +19,7 @@ import {
   MessageCircle,
   Truck,
   ArrowLeftRight,
+  ChevronDown,
 } from "lucide-react";
 
 import heroImg from "@/assets/hero-detailing.jpg";
@@ -470,6 +471,18 @@ function Index() {
     };
   }, [menuOpen]);
 
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!servicesOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!servicesRef.current?.contains(e.target as Node)) setServicesOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [servicesOpen]);
+
   const servicesReveal = useReveal<HTMLElement>();
   const pricingReveal = useReveal<HTMLElement>();
   const galleryReveal = useReveal<HTMLElement>();
@@ -498,21 +511,46 @@ function Index() {
           <nav className="hidden gap-20 text-sm font-normal whitespace-nowrap text-muted-foreground lg:flex">
             {nav.map(([label, href]) =>
               label === "Услуги" ? (
-                <div key={href} className="group relative">
+                <div
+                  key={href}
+                  ref={servicesRef}
+                  className="group relative flex items-center gap-1"
+                  onKeyDown={(e) => {
+                    if (e.key !== "Escape") return;
+                    setServicesOpen(false);
+                    (document.activeElement as HTMLElement | null)?.blur();
+                  }}
+                >
                   <a
                     href={href}
-                    className="group/link relative flex items-center gap-1 transition-colors hover:text-primary"
+                    className="group/link relative transition-colors hover:text-primary"
                     style={{ WebkitTextStroke: "0.5px currentColor" }}
                   >
                     {label}
                     <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-primary transition-transform duration-150 ease-out group-hover/link:scale-x-100" />
                   </a>
-                  <div className="invisible absolute top-full left-1/2 z-50 w-64 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                  <button
+                    type="button"
+                    aria-label="Список услуг"
+                    aria-expanded={servicesOpen}
+                    aria-controls="services-menu"
+                    onClick={() => setServicesOpen((v) => !v)}
+                    className="-m-1 rounded p-1 transition-colors hover:text-primary"
+                  >
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  <div
+                    id="services-menu"
+                    className={`absolute top-full left-1/2 z-50 w-64 -translate-x-1/2 pt-4 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-has-focus-visible:visible group-has-focus-visible:opacity-100 ${servicesOpen ? "visible opacity-100" : "invisible opacity-0"}`}
+                  >
                     <div className="surface-panel rounded-lg py-2 shadow-[var(--shadow-panel)]">
                       {services.map((s) => (
                         <a
                           key={s.title}
                           href="#services"
+                          onClick={() => setServicesOpen(false)}
                           className="group/item relative block px-5 py-2.5 text-sm text-foreground transition-colors hover:bg-graphite hover:text-primary"
                         >
                           {s.title}
