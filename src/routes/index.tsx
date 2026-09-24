@@ -456,15 +456,18 @@ function Index() {
 
   const [ready, setReady] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [headerElevated, setHeaderElevated] = useState(false);
 
   useEffect(() => {
-    if (menuOpen) {
-      setHeaderElevated(true);
-      return;
-    }
-    const t = setTimeout(() => setHeaderElevated(false), 300);
-    return () => clearTimeout(t);
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   const servicesReveal = useReveal<HTMLElement>();
@@ -484,9 +487,7 @@ function Index() {
       <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase min-[1700px]:flex">
         Реклама
       </div>
-      <header
-        className={`sticky top-0 border-b border-border bg-background/80 backdrop-blur ${headerElevated ? "z-[130]" : "z-40"}`}
-      >
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <a
             href="#top"
@@ -539,7 +540,7 @@ function Index() {
             aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="relative z-[120] flex h-10 w-10 items-center justify-center rounded-md border border-border text-foreground"
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-foreground"
           >
             <span className="relative flex h-4 w-5 flex-col justify-between">
               <span
@@ -557,31 +558,50 @@ function Index() {
       </header>
 
       <div
-        className={`fixed inset-0 z-[110] bg-background/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-background/60 backdrop-blur-sm transition-opacity duration-300 ${
           menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={() => setMenuOpen(false)}
       />
       <div
-        className={`fixed top-0 right-0 z-[115] flex h-full w-full max-w-[280px] flex-col overflow-y-auto border-l border-border bg-background p-8 pt-24 transition-transform duration-300 ease-out ${
+        inert={!menuOpen}
+        className={`fixed top-0 right-0 z-45 flex h-full w-full max-w-[280px] flex-col gap-6 overflow-y-auto border-l border-border bg-background p-8 pt-24 transition-transform duration-300 ease-out ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <nav className="flex flex-col gap-1 text-lg">
-          {["Грузовые", "Мото"].map((label) => (
+        <a
+          href="#booking"
+          onClick={() => setMenuOpen(false)}
+          className="btn-ember rounded-md px-5 py-3 text-center text-sm"
+        >
+          Записаться
+        </a>
+        <nav className="flex flex-col gap-1 text-lg lg:hidden">
+          {nav.map(([label, href]) => (
             <a
-              key={label}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setMenuOpen(false);
-              }}
+              key={href}
+              href={href}
+              onClick={() => setMenuOpen(false)}
               className="rounded-md px-3 py-3 transition-colors hover:bg-graphite hover:text-primary"
             >
               {label}
             </a>
           ))}
         </nav>
+        <div className="flex flex-col gap-1 border-t border-border pt-6 text-lg">
+          {["Грузовые", "Мото"].map((label) => (
+            <span
+              key={label}
+              aria-disabled="true"
+              className="flex items-center justify-between rounded-md px-3 py-3 text-muted-foreground"
+            >
+              {label}
+              <span className="rounded-full border border-border px-2 py-0.5 text-[10px] tracking-wider uppercase">
+                скоро
+              </span>
+            </span>
+          ))}
+        </div>
       </div>
 
       <section id="top" className="relative overflow-hidden">
