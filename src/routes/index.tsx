@@ -32,20 +32,20 @@ import parkAsset from "@/assets/apelsin-park.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "APELSIN DETAILING — детейлинг легковых авто и фур в Астане" },
+      { title: "APELSIN DETAILING — детейлинг авто, фур и мото в Астане" },
       {
         name: "description",
         content:
-          "APELSIN Industrial Park, Астана, Алаш 46/2: детейлинг легковых машин и грузовых фур — полировка, керамика, химчистка, защитные плёнки.",
+          "APELSIN Industrial Park, Астана, Алаш 46/2: детейлинг легковых машин, грузовых фур и мотоциклов — полировка, керамика, химчистка, защитные плёнки.",
       },
       {
         property: "og:title",
-        content: "APELSIN DETAILING — детейлинг легковых авто и фур в Астане",
+        content: "APELSIN DETAILING — детейлинг авто, фур и мото в Астане",
       },
       {
         property: "og:description",
         content:
-          "Детейлинг легковых авто и грузовых фур в Астане: керамика, полировка, химчистка. Фото до/после, цены и запись онлайн.",
+          "Детейлинг легковых авто, грузовых фур и мотоциклов в Астане: керамика, полировка, химчистка. Фото до/после, цены и запись онлайн.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
