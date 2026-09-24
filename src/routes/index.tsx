@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "@/assets/hero-detailing.jpg";
-import apelsinLogo from "@/assets/apelsin-logo.png";
+import apelsinLogo from "@/assets/apelsin-logo.webp";
 import beforePaint from "@/assets/before-paint.jpg";
 import afterPaint from "@/assets/after-paint.jpg";
 import beforeInterior from "@/assets/before-interior.jpg";
@@ -84,15 +84,23 @@ function useReveal<T extends HTMLElement>() {
 
 const PRELOAD_HOLD_MS = 100;
 const PRELOAD_FADE_MS = 250;
+const PRELOADER_SESSION_KEY = "apelsin-preloader-shown";
 
 function Preloader({ onDone }: { onDone: () => void }) {
   const [mounted, setMounted] = useState(true);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    if (sessionStorage.getItem(PRELOADER_SESSION_KEY) === "1") {
+      setMounted(false);
+      onDone();
+      return;
+    }
+    sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
     document.body.style.overflow = "hidden";
     const holdTimer = setTimeout(() => setFading(true), PRELOAD_HOLD_MS);
     return () => clearTimeout(holdTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount; onDone identity is irrelevant here
   }, []);
 
   useEffect(() => {
@@ -501,7 +509,7 @@ function Index() {
       <div className="fixed top-1/2 right-4 z-30 hidden h-[600px] w-56 -translate-y-1/2 items-center justify-center rounded-lg border border-dashed border-border bg-graphite/30 text-center text-xs text-muted-foreground uppercase min-[1700px]:flex">
         Реклама
       </div>
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <a
             href="#top"
