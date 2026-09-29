@@ -34,6 +34,8 @@ packages to the bun-side excludes list.
 - PRs are squash-merged, with the PR title plus ` (#N)` as the commit subject. Squashing on merge is
   fine for Lovable; only rewriting commits already on `main` is not.
 - `git pull` is configured to rebase, so stash uncommitted changes before pulling.
+- Before a push or PR, run `/code-review` on the branch: `medium` for copy/UI, `high` for logic,
+  auth, RLS or personal data. Verify Copilot's PR comments against the code before applying them.
 
 ## Architecture
 
