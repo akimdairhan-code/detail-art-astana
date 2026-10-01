@@ -34,23 +34,14 @@ function ServicePageView() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link to="/" className="font-display text-2xl tracking-widest">
-            APELSIN<span className="text-primary">.</span>DETAILING
-          </Link>
-          <Link
-            to="/"
-            hash="services"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
-          >
-            <ArrowLeft className="h-4 w-4" /> Все услуги
-          </Link>
-        </div>
-      </header>
-
       <main>
         <section className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
+          <a
+            href="/#services"
+            className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+          >
+            <ArrowLeft className="h-4 w-4" /> Все услуги
+          </a>
           <p className="eyebrow">Услуга</p>
           <h1 className="mt-4 max-w-3xl text-5xl leading-[0.95] sm:text-7xl">{service.title}</h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{service.summary}</p>

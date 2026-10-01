@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Wrench,
   Wind,
@@ -69,14 +69,6 @@ const repairs = [
 function TrucksPage() {
   return (
     <div className="min-h-screen overflow-x-clip bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link to="/" className="font-display text-2xl tracking-widest">
-            APELSIN<span className="text-primary">.</span>DETAILING
-          </Link>
-        </div>
-      </header>
-
       <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1fr_auto]">
         <div>
           <p className="eyebrow">Apelsin Truck</p>
