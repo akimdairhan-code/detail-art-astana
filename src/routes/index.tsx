@@ -147,36 +147,43 @@ function Preloader({ onDone }: { onDone: () => void }) {
 const services = [
   {
     icon: Sparkles,
+    slug: "body-polishing",
     title: "Полировка кузова",
     text: "Абразивная и защитная полировка: убираем риски, голограммы и мутность лака.",
   },
   {
     icon: ShieldCheck,
+    slug: "ceramic-coating",
     title: "Керамическое покрытие",
     text: "Керамика 9H до 3 лет: гидрофобный эффект, глубина цвета и лёгкая мойка.",
   },
   {
     icon: Droplets,
+    slug: "interior-cleaning",
     title: "Химчистка салона",
     text: "Полный разбор, экстракторная чистка, устранение запахов озоном.",
   },
   {
     icon: Car,
+    slug: "paint-protection-film",
     title: "Антигравийная плёнка",
     text: "Оклейка полиуретаном зон риска или всего кузова, самовосстановление.",
   },
   {
     icon: Sun,
+    slug: "window-tinting",
     title: "Тонировка стёкол",
     text: "Атермальные и тонирующие плёнки премиум-класса по ГОСТ.",
   },
   {
     icon: Truck,
+    slug: "truck-detailing",
     title: "Детейлинг грузовых фур",
     text: "Мойка и полировка тягачей и прицепов, чистка кабины, защита хрома и пластика.",
   },
   {
     icon: SprayCan,
+    slug: "headlights-leather",
     title: "Реставрация фар и кожи",
     text: "Полировка фар с защитой лаком, покраска и восстановление кожи салона.",
   },
@@ -559,15 +566,16 @@ function Index() {
                   >
                     <div className="surface-panel rounded-lg py-2 shadow-[var(--shadow-panel)]">
                       {services.map((s) => (
-                        <a
-                          key={s.title}
-                          href="#services"
+                        <Link
+                          key={s.slug}
+                          to="/services/$slug"
+                          params={{ slug: s.slug }}
                           onClick={() => setServicesOpen(false)}
                           className="group/item relative block px-5 py-2.5 text-sm text-foreground transition-colors hover:bg-graphite hover:text-primary"
                         >
                           {s.title}
                           <span className="absolute bottom-1 left-5 h-px w-[calc(100%-2.5rem)] origin-left scale-x-0 bg-primary transition-transform duration-150 ease-out group-hover/item:scale-x-100" />
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -731,10 +739,10 @@ function Index() {
         <p className="eyebrow">Услуги</p>
         <h2 className="mt-3 text-4xl sm:text-5xl">Что делаем в боксах</h2>
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {services.map(({ icon: Icon, title, text }) => (
+          {services.map(({ icon: Icon, slug, title, text }) => (
             <article
               key={title}
-              className="surface-panel group rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.05] hover:border-primary hover:shadow-[var(--shadow-panel)]"
+              className="surface-panel group relative rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.05] hover:border-primary hover:shadow-[var(--shadow-panel)]"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
                 <Icon className="h-6 w-6 transition-transform duration-300 group-hover:rotate-6" />
@@ -743,6 +751,14 @@ function Index() {
                 {title}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              {/* The ::after overlay stretches the link over the whole card. */}
+              <Link
+                to="/services/$slug"
+                params={{ slug }}
+                className="mt-4 inline-block text-sm font-semibold text-primary after:absolute after:inset-0 after:content-['']"
+              >
+                Подробнее →
+              </Link>
             </article>
           ))}
         </div>
