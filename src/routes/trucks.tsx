@@ -1,6 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Wrench, Wind, ClipboardCheck, ScanLine, Cog, Flame, Zap, MessageCircle } from "lucide-react";
+import {
+  Wrench,
+  Wind,
+  ClipboardCheck,
+  ScanLine,
+  Cog,
+  Flame,
+  Zap,
+  MessageCircle,
+} from "lucide-react";
 import { MANAGER_PHONE } from "@/lib/business-info";
+import truckImg from "@/assets/truck-hero.jpg";
 
 export const Route = createFileRoute("/trucks")({
   head: () => ({
@@ -58,7 +68,7 @@ const repairs = [
 
 function TrucksPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-clip bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <Link to="/" className="font-display text-2xl tracking-widest">
@@ -67,28 +77,42 @@ function TrucksPage() {
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
-        <p className="eyebrow">Apelsin Truck</p>
-        <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl">
-          Ремонт <span className="text-primary">грузовых авто</span>
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-          Обслуживаем тягачи, фуры и прицепы в собственных высоких боксах Apelsin Industrial Park —
-          от плановых регламентных работ до сложного ремонта ходовой, электрики и сварки.
-        </p>
-        <div className="mt-9 flex flex-wrap gap-3">
-          <a href={TRUCK_WHATSAPP} target="_blank" rel="noreferrer" className="btn-ember rounded-md px-8 py-4 text-sm">
-            Записаться на ремонт
-          </a>
-          <a
-            href={TRUCK_WHATSAPP}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-md border border-border px-8 py-4 text-sm font-semibold tracking-widest uppercase transition-colors hover:border-primary hover:text-primary"
-          >
-            <MessageCircle className="h-4 w-4" /> WhatsApp
-          </a>
+      <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1fr_auto]">
+        <div>
+          <p className="eyebrow">Apelsin Truck</p>
+          <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] sm:text-7xl">
+            Ремонт <span className="text-primary">грузовых авто</span>
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+            Обслуживаем тягачи, фуры и прицепы в собственных высоких боксах Apelsin Industrial Park
+            — от плановых регламентных работ до сложного ремонта ходовой, электрики и сварки.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <a
+              href={TRUCK_WHATSAPP}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-ember rounded-md px-8 py-4 text-sm"
+            >
+              Записаться на ремонт
+            </a>
+            <a
+              href={TRUCK_WHATSAPP}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border border-border px-8 py-4 text-sm font-semibold tracking-widest uppercase transition-colors hover:border-primary hover:text-primary"
+            >
+              <MessageCircle className="h-4 w-4" /> WhatsApp
+            </a>
+          </div>
         </div>
+        <img
+          src={truckImg}
+          alt="Тягач Mercedes-Benz Actros"
+          width={1100}
+          height={1100}
+          className="mx-auto w-full max-w-md lg:max-w-lg lg:translate-x-12"
+        />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-24">
