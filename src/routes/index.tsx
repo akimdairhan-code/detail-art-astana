@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { z } from "zod";
+import { bookingSchema } from "@/lib/booking-schema";
 import { supabase } from "@/integrations/supabase/client";
+import { GOALS, reachGoal } from "@/lib/analytics";
 import {
   ADDRESS,
   HOURS,
@@ -34,7 +35,7 @@ import {
   Navigation,
 } from "lucide-react";
 
-import heroImg from "@/assets/hero-detailing.jpg";
+import heroImg from "@/assets/hero-car.webp";
 import apelsinLogo from "@/assets/apelsin-logo.webp";
 import beforePaint from "@/assets/before-paint.jpg";
 import afterPaint from "@/assets/after-paint.jpg";
@@ -293,19 +294,6 @@ function BeforeAfter({ before, after, label }: { before: string; after: string; 
   );
 }
 
-const bookingSchema = z.object({
-  name: z.string().trim().min(2, "Укажите имя (минимум 2 символа)").max(80, "Имя слишком длинное"),
-  phone: z
-    .string()
-    .trim()
-    .min(10, "Укажите корректный номер телефона")
-    .max(20, "Номер слишком длинный")
-    .regex(/^[\d+()\-\s]+$/, "Номер может содержать только цифры и знаки + ( ) -"),
-  car: z.string().trim().max(80, "Слишком длинное название авто"),
-  service: z.string().trim().min(1).max(120),
-  date: z.string().trim().max(20),
-});
-
 function BookingForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -369,6 +357,7 @@ function BookingForm() {
     if (whatsappWindow) whatsappWindow.location.href = url;
     else window.open(url, "_blank", "noopener,noreferrer");
 
+    reachGoal(GOALS.bookingSubmit);
     setStatus("sent");
   };
 
@@ -669,15 +658,18 @@ function Index() {
         </div>
       </div>
 
-      <section id="top" className="relative overflow-hidden">
+      <section id="top" className="relative isolate overflow-hidden bg-background">
+        {/* Portrait photo: full-bleed on mobile, beside the text on desktop. `lighten` drops the
+            photo's own dark backdrop so only the lit car shows, and the mask fades the rest. */}
         <img
           src={heroImg}
-          alt="Детейлинг-центр в Астане"
-          width={1600}
-          height={1008}
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          alt=""
+          width={1179}
+          height={2564}
+          fetchPriority="high"
+          className="absolute inset-y-0 right-0 h-full w-full object-cover object-[50%_60%] opacity-60 mix-blend-lighten [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_60%,transparent)] lg:right-[max(4%,calc(50%-40rem))] lg:w-[55%] lg:max-w-[50rem] lg:opacity-100 lg:[mask-image:radial-gradient(closest-side_at_50%_55%,black_60%,transparent)]"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/25 lg:via-background/40 lg:to-transparent" />
         <div className="relative mx-auto max-w-6xl px-4 py-28 sm:py-36">
           <p
             className={`eyebrow ${ready ? "animate-[fade-in-up_0.6s_ease_both] [animation-delay:60ms]" : "opacity-0"}`}
@@ -705,6 +697,7 @@ function Index() {
             </a>
             <a
               href={WHATSAPP}
+              onClick={() => reachGoal(GOALS.whatsappClick)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-md border border-border px-8 py-4 text-sm font-semibold tracking-widest uppercase transition-colors hover:border-primary hover:text-primary"
@@ -931,7 +924,11 @@ function Index() {
               </li>
               <li className="flex gap-3">
                 <Phone className="h-5 w-5 shrink-0 text-primary" />
-                <a href={PHONE_HREF} className="hover:text-primary">
+                <a
+                  href={PHONE_HREF}
+                  onClick={() => reachGoal(GOALS.phoneClick)}
+                  className="hover:text-primary"
+                >
                   {PHONE}
                 </a>
               </li>
@@ -1014,13 +1011,23 @@ function Index() {
               </li>
               <li className="flex gap-2">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <a href={PHONE_HREF} className="hover:text-primary">
+                <a
+                  href={PHONE_HREF}
+                  onClick={() => reachGoal(GOALS.phoneClick)}
+                  className="hover:text-primary"
+                >
                   {PHONE}
                 </a>
               </li>
               <li className="flex gap-2">
                 <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <a href={WHATSAPP} target="_blank" rel="noreferrer" className="hover:text-primary">
+                <a
+                  href={WHATSAPP}
+                  onClick={() => reachGoal(GOALS.whatsappClick)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-primary"
+                >
                   WhatsApp
                 </a>
               </li>
@@ -1058,6 +1065,7 @@ function Index() {
 
       <a
         href={WHATSAPP}
+        onClick={() => reachGoal(GOALS.whatsappClick)}
         target="_blank"
         rel="noreferrer"
         aria-label="Написать в WhatsApp"

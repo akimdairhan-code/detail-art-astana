@@ -7,6 +7,8 @@ interface BookingRecord {
   car: string | null;
   service: string;
   preferred_date: string | null;
+  // Missing until supabase/sql/2026-09-29-bookings-source.sql is applied.
+  source?: string;
 }
 
 interface WebhookPayload {
@@ -33,9 +35,17 @@ Deno.serve(async (req) => {
   }
 
   const payload: WebhookPayload = await req.json();
+  // The CRM updates bookings (status, note); only new bookings are announced.
+  if (payload.type !== "INSERT") {
+    return new Response("Ignored", { status: 200 });
+  }
   const record = payload.record;
   if (!record) {
     return new Response("No record in payload", { status: 400 });
+  }
+  // Bookings added by hand in the CRM are already known to the manager who added them.
+  if (record.source && record.source !== "site") {
+    return new Response("Ignored", { status: 200 });
   }
 
   const lines = [

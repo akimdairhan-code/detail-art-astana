@@ -34,6 +34,8 @@ packages to the bun-side excludes list.
 - PRs are squash-merged, with the PR title plus ` (#N)` as the commit subject. Squashing on merge is
   fine for Lovable; only rewriting commits already on `main` is not.
 - `git pull` is configured to rebase, so stash uncommitted changes before pulling.
+- Before a push or PR, run `/code-review` on the branch: `medium` for copy/UI, `high` for logic,
+  auth, RLS or personal data. Verify Copilot's PR comments against the code before applying them.
 
 ## Architecture
 
@@ -46,8 +48,9 @@ file-based routing conventions (dynamic `$id`, optional `{-$category}`, splat `$
 The entire homepage (hero, services, pricing, before/after gallery, reviews, about, booking form,
 map, footer) lives in one file: `src/routes/index.tsx`. There are no separate section/page
 components — content arrays (`services`, `pricing`, `reviews`) and the `BookingForm` /
-`BeforeAfter` components are defined inline in that file. The only other page is
-`src/routes/privacy.tsx` (privacy policy for the booking form's personal data).
+`BeforeAfter` components are defined inline in that file. The other public page is
+`src/routes/privacy.tsx` (privacy policy for the booking form's personal data); `/admin` is the
+staff CRM (see below).
 
 **Business info**: `src/lib/business-info.ts` is the single source for contact and location data —
 phone, WhatsApp link, address, working hours, 2GIS widget/org id, route links, social links and the
@@ -65,8 +68,8 @@ still being collected from the company.
   unverified unless the user confirms it.
 - **Unverified**: the services list and descriptions, pricing packages, the hero stats ("9 лет на
   рынке", "3 года гарантия керамики", 2GIS rating), working hours, promises such as "перезвоним в
-  течение 15 минут", "2–3 машины в день" and "фотоотчёт", the "О нас" text, and the photos
-  (`src/assets/hero-detailing.jpg` shows another studio's "PRO DETAILING" branding).
+  течение 15 минут", "2–3 машины в день" and "фотоотчёт", the "О нас" text, and the before/after
+  photos. The hero image (`src/assets/hero-car.webp`) is a generic mood shot, not the studio's work.
 
 Don't use unverified content as a source for new work: don't copy it into structured data (JSON-LD),
 meta tags, generated images, new pages or `business-info.ts`. Build around the reliable data, leave
@@ -96,10 +99,31 @@ JSON) into the same rendered error page. `src/lib/error-capture.ts`, `error-page
   server-side auth middleware for protected server functions/routes.
 
 The booking form (`BookingForm` in `src/routes/index.tsx`) inserts into a `bookings` table via
-`supabase.from("bookings").insert(...)`, validated client-side with a `zod` schema, then redirects a
+`supabase.from("bookings").insert(...)`, validated client-side with the `zod` schema in
+`src/lib/booking-schema.ts` (shared with the CRM's manual entry), then redirects a
 pre-opened window to a `wa.me` WhatsApp deep link with the booking details prefilled. The window is
 opened synchronously before the `await` (`window.open("", "_blank", ...)`) so it isn't blocked by
-popup blockers, then its `location.href` is set after the Supabase insert resolves.
+popup blockers, then its `location.href` is set after the Supabase insert resolves. A Supabase
+database webhook on `bookings` INSERT calls the `notify-booking` Edge Function
+(`supabase/functions/`), which posts the booking to Telegram — only for `source = 'site'`; bookings
+added by hand in the CRM are skipped. Changes to the function need a separate deploy (Lovable or
+Supabase CLI), a push alone doesn't update it.
+
+**CRM (`/admin`)**: `src/routes/admin.tsx` is a client-only (`ssr: false`, `noindex`) layout that
+shows a Supabase email/password login, checks `is_admin()` and renders child routes;
+`src/routes/admin/index.tsx` lists bookings with status changes and a manager note, and lets staff
+add bookings by hand with a `source` (phone call, WhatsApp, …). Security is enforced by RLS, not by
+the UI: only users listed in `public.admins` can read and insert bookings and update their
+`status` / `note`; `anon` can only insert, with `source = 'site'`. Unconfirmed business lists
+(booking statuses and sources) live in `src/lib/crm-config.ts` with `TODO` markers — change them
+there, not in components.
+
+**Database changes**: there are no migrations in the repo. Schema/RLS changes are written as SQL
+files in `supabase/sql/` and applied by hand in the Supabase SQL Editor; when they add tables,
+columns or functions, update `src/integrations/supabase/types.ts` to match (Lovable regenerates it
+from the live schema, so the hand edit must be what the generator would produce). New tables need
+explicit `GRANT`s for `anon` / `authenticated` in addition to RLS policies — this project doesn't
+grant them automatically.
 
 **Env vars**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID` for
 the client bundle; `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PROJECT_ID` as SSR

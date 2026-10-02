@@ -14,15 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           car: string | null
           created_at: string
           id: string
           name: string
+          note: string | null
           phone: string
           preferred_date: string | null
           service: string
+          source: string
           status: string
         }
         Insert: {
@@ -30,9 +47,11 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          note?: string | null
           phone: string
           preferred_date?: string | null
           service: string
+          source?: string
           status?: string
         }
         Update: {
@@ -40,9 +59,11 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          note?: string | null
           phone?: string
           preferred_date?: string | null
           service?: string
+          source?: string
           status?: string
         }
         Relationships: []
@@ -52,7 +73,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
