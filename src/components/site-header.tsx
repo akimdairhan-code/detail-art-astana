@@ -23,10 +23,13 @@ export function SiteHeader() {
       if (e.key === "Escape") setMenuOpen(false);
     };
     document.addEventListener("keydown", onKey);
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   }, [menuOpen]);
 
