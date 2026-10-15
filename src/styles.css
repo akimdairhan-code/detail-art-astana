@@ -66,7 +66,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-
 :root {
   --radius: 0.25rem;
   --background: oklch(0.09 0.003 285);
@@ -115,6 +114,12 @@
     border-color: var(--color-border);
   }
 
+  /* Always reserve the scrollbar's space, so locking scroll (open mobile menu) doesn't widen the
+     viewport and shift fixed elements such as the side ad slots. */
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -143,7 +148,9 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
   &:hover {
     transform: translateY(-2px);
     filter: brightness(1.07);
@@ -180,7 +187,9 @@
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
 }
 
 .reveal-visible {
@@ -198,4 +207,3 @@
     scroll-behavior: auto !important;
   }
 }
-
