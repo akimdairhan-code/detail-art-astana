@@ -1,12 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  Ruler,
   Flame,
-  Scissors,
-  Truck,
-  Fence,
-  Warehouse,
-  PaintRoller,
+  Zap,
+  Wrench,
+  Crosshair,
+  Building2,
   ArrowUpDown,
   Wind,
   DoorOpen,
@@ -22,7 +20,7 @@ export const Route = createFileRoute("/metal-workshop")({
       { title: "Цех металлоконструкций — Apelsin Industrial Park" },
       {
         name: "description",
-        content: `Цех металлоконструкций — ${ADDRESS}.`,
+        content: `Производство металлических изделий любой сложности. Цех металлоконструкций — ${ADDRESS}.`,
       },
     ],
   }),
@@ -31,44 +29,34 @@ export const Route = createFileRoute("/metal-workshop")({
 
 const METAL_WHATSAPP = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent("Здравствуйте! Хочу заказать работы в цехе металлоконструкций")}`;
 
-// Draft copy written for the site, not confirmed by the company yet (see "Content reliability" in
-// CLAUDE.md). The workshop features below describe what is visible in the photo; capacities,
-// prices and timing are deliberately left out until the owner confirms them.
+// The list of services is confirmed by the company; the card texts are neutral copy written for
+// the site and make no promises about capacities, prices or timing (see "Content reliability" in
+// CLAUDE.md). The workshop features below describe what is visible in the photo.
 const works = [
   {
-    icon: Ruler,
-    title: "Изготовление по чертежам",
-    text: "Каркасы, фермы, лестницы, площадки и нестандартные конструкции по вашим чертежам или эскизу — поможем довести идею до рабочего чертежа.",
-  },
-  {
     icon: Flame,
-    title: "Сварочные работы",
-    text: "Полуавтоматическая и аргонная сварка чёрного металла, нержавейки и алюминия — как в цехе, так и ремонт готовых изделий.",
+    title: "Аргонная сварка",
+    text: "Аккуратный и прочный шов на нержавейке, алюминии и тонком металле — там, где важны качество и внешний вид соединения.",
   },
   {
-    icon: Scissors,
-    title: "Резка и гибка металла",
-    text: "Раскрой листа, профиля и трубы в размер, гибка деталей — подготовим заготовки под вашу сборку или сделаем изделие целиком.",
+    icon: Zap,
+    title: "Контактная сварка",
+    text: "Точечное соединение листового металла без присадочной проволоки — быстро и без лишнего нагрева деталей.",
   },
   {
-    icon: Truck,
-    title: "Ремонт рам и кузовов",
-    text: "Восстановление и усиление рам грузовиков и прицепов, кронштейнов и навесного оборудования — рядом с нашим грузовым сервисом.",
+    icon: Wrench,
+    title: "Сварка полуавтоматом",
+    text: "Надёжная сварка каркасов, рам и конструкций из чёрного металла — для изготовления новых изделий и ремонта готовых.",
   },
   {
-    icon: Fence,
-    title: "Навесы, ограждения, ворота",
-    text: "Навесы для техники и парковок, заборы, ограждения, распашные и откатные ворота — изготовление и монтаж.",
+    icon: Crosshair,
+    title: "Лазерная резка металла",
+    text: "Точный раскрой листового металла по чертежу: ровный рез и детали сложной формы, готовые к сборке.",
   },
   {
-    icon: Warehouse,
-    title: "Стеллажи и складское оборудование",
-    text: "Металлические стеллажи, полки, верстаки и тележки под размеры вашего склада или мастерской.",
-  },
-  {
-    icon: PaintRoller,
-    title: "Покраска и защита от коррозии",
-    text: "Очистка, грунтование и покраска готовых конструкций, чтобы металл дольше служил на улице и в неотапливаемых помещениях.",
+    icon: Building2,
+    title: "Здания из металлоконструкций под ключ",
+    text: "Склады, ангары, производственные и коммерческие здания — от изготовления каркаса до возведения готового объекта.",
   },
 ];
 
@@ -111,8 +99,7 @@ function MetalWorkshopPage() {
           Цех <span className="text-primary">металлоконструкций</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-          Изготавливаем и ремонтируем металлоконструкции в Apelsin Industrial Park: сварка, резка,
-          сборка и покраска — от кронштейнов и рам до навесов, ворот и стеллажей.
+          Производство металлических изделий любой сложности.
         </p>
         <div className="mt-9 flex flex-wrap gap-3">
           <a
