@@ -8,7 +8,6 @@ import { SERVICE_PAGES } from "@/lib/services";
 // `/#...` hashes: on the homepage that just scrolls, elsewhere it opens the homepage section.
 const nav = [
   ["Услуги", "/#services"],
-  ["Цены", "/#pricing"],
   ["До/после", "/#gallery"],
   ["Отзывы", "/#reviews"],
   ["Контакты", "/#contacts"],

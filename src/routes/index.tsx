@@ -30,6 +30,9 @@ import {
   Check,
   MessageCircle,
   Truck,
+  Bike,
+  Factory,
+  Bus,
   ArrowLeftRight,
   Navigation,
 } from "lucide-react";
@@ -188,43 +191,34 @@ const services = [
   },
 ];
 
-const pricing = [
+// Directions of the industrial park shown in the homepage "Услуги" grid, each with its own page.
+// `services` above stays as the list for the booking form's select.
+const directions = [
   {
-    name: "Экспресс",
-    price: "25 000 ₸",
-    time: "3–4 часа",
-    features: [
-      "Двухфазная мойка кузова",
-      "Обезжиривание и защитный воск",
-      "Чистка стёкол и дисков",
-      "Влажная уборка салона",
-    ],
+    icon: Truck,
+    to: "/trucks",
+    title: "Грузовые",
+    text: "Краткосрочные ремонты, капитальный ремонт и переоборудование грузовой техники.",
   },
   {
-    name: "Керамика 9H",
-    price: "180 000 ₸",
-    time: "2 дня",
-    popular: true,
-    features: [
-      "Абразивная полировка в 2 шага",
-      "Керамика 9H, до 3 лет защиты",
-      "Гидрофоб на стёкла",
-      "Защита дисков и пластика",
-      "Бесплатная мойка каждые 3 месяца",
-    ],
+    icon: Bike,
+    to: "/moto",
+    title: "Мото",
+    text: "Детейлинг и уход за мотоциклами.",
   },
   {
-    name: "Салон под ноль",
-    price: "70 000 ₸",
-    time: "1 день",
-    features: [
-      "Разбор и химчистка всех поверхностей",
-      "Экстрактор + пароочиститель",
-      "Озонирование от запахов",
-      "Кондиционер для кожи",
-    ],
+    icon: Factory,
+    to: "/metal-workshop",
+    title: "Металлоконструкции",
+    text: "Производство металлических изделий любой сложности: сварка, лазерная резка, здания под ключ.",
   },
-];
+  {
+    icon: Bus,
+    to: "/sprinter-tuning",
+    title: "Тюнинг Sprinter",
+    text: "Тюнинг и переоборудование Mercedes-Benz Sprinter под ваши задачи.",
+  },
+] as const;
 
 const reviews: { name: string; car: string; text: string }[] = [];
 
@@ -467,7 +461,6 @@ function BookingForm() {
 function Index() {
   const nav = [
     ["Услуги", "#services"],
-    ["Цены", "#pricing"],
     ["До/после", "#gallery"],
     ["Отзывы", "#reviews"],
     ["Контакты", "#contacts"],
@@ -476,7 +469,6 @@ function Index() {
   const [ready, setReady] = useState(false);
 
   const servicesReveal = useReveal<HTMLElement>();
-  const pricingReveal = useReveal<HTMLElement>();
   const galleryReveal = useReveal<HTMLElement>();
   const reviewsReveal = useReveal<HTMLElement>();
   const bookingReveal = useReveal<HTMLElement>();
@@ -560,82 +552,31 @@ function Index() {
       <section
         id="services"
         ref={servicesReveal.ref}
-        className={`mx-auto max-w-6xl px-4 py-24 ${servicesReveal.className}`}
-      >
-        <p className="eyebrow">Услуги</p>
-        <h2 className="mt-3 text-4xl sm:text-5xl">Что делаем в боксах</h2>
-        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {services.map(({ icon: Icon, slug, title, text }) => (
-            <article
-              key={title}
-              className="surface-panel group relative rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.05] hover:border-primary hover:shadow-[var(--shadow-panel)]"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
-                <Icon className="h-6 w-6 transition-transform duration-300 group-hover:rotate-6" />
-              </div>
-              <h3 className="mt-5 text-2xl transition-colors duration-300 group-hover:text-primary">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
-              {/* The ::after overlay stretches the link over the whole card. */}
-              <Link
-                to="/services/$slug"
-                params={{ slug }}
-                className="mt-4 inline-block text-sm font-semibold text-primary after:absolute after:inset-0 after:content-['']"
-              >
-                Подробнее →
-              </Link>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
-        id="pricing"
-        ref={pricingReveal.ref}
-        className={`diag-stripes border-y border-border bg-graphite/40 ${pricingReveal.className}`}
+        className={`diag-stripes border-y border-border bg-graphite/40 ${servicesReveal.className}`}
       >
         <div className="mx-auto max-w-6xl px-4 py-24">
-          <p className="eyebrow">Цены</p>
-          <h2 className="mt-3 text-4xl sm:text-5xl">Пакеты и стоимость</h2>
-          <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-            Цены указаны для седанов. Для кроссоверов и внедорожников +15–25%. Точную смету считаем
-            после осмотра лака толщиномером.
-          </p>
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            {pricing.map((p) => (
+          <p className="eyebrow">Услуги</p>
+          <h2 className="mt-3 text-4xl sm:text-5xl">Наши направления</h2>
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            {directions.map(({ icon: Icon, to, title, text }) => (
               <article
-                key={p.name}
-                className={`surface-panel relative flex h-full flex-col rounded-lg p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[var(--shadow-panel)] ${p.popular ? "border-primary" : ""}`}
+                key={title}
+                className="surface-panel group relative rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.05] hover:border-primary hover:shadow-[var(--shadow-panel)]"
               >
-                {p.popular && (
-                  <span className="absolute -top-3 left-7 rounded bg-primary px-3 py-1 text-xs font-bold tracking-widest text-primary-foreground uppercase">
-                    Хит
-                  </span>
-                )}
-                <h3 className="text-3xl">{p.name}</h3>
-                <p className="mt-2 flex items-center gap-2 text-xs tracking-wider text-muted-foreground uppercase">
-                  <Clock className="h-3.5 w-3.5" /> {p.time}
-                </p>
-                <p className="font-display mt-5 text-4xl text-primary">{p.price}</p>
-                <ul className="mt-6 mb-6 space-y-3 text-sm">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex gap-2 text-muted-foreground">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="#booking"
-                  className={`mt-auto block rounded-md px-5 py-3 text-center text-xs font-semibold tracking-widest uppercase ${
-                    p.popular
-                      ? "btn-ember"
-                      : "border border-border transition-colors hover:border-primary hover:text-primary"
-                  }`}
+                <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Icon className="h-6 w-6 transition-transform duration-300 group-hover:rotate-6" />
+                </div>
+                <h3 className="mt-5 text-2xl transition-colors duration-300 group-hover:text-primary">
+                  {title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+                {/* The ::after overlay stretches the link over the whole card. */}
+                <Link
+                  to={to}
+                  className="mt-4 inline-block text-sm font-semibold text-primary after:absolute after:inset-0 after:content-['']"
                 >
-                  Выбрать пакет
-                </a>
+                  Подробнее →
+                </Link>
               </article>
             ))}
           </div>

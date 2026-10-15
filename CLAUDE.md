@@ -45,9 +45,9 @@ error-boundary components) — never create `src/pages/` or Next.js/Remix-style 
 `src/routeTree.gen.ts` is auto-generated; don't hand-edit it. See `src/routes/README.md` for the
 file-based routing conventions (dynamic `$id`, optional `{-$category}`, splat `$.tsx`, `_layout.tsx`).
 
-The entire homepage (hero, services, pricing, before/after gallery, reviews, about, booking form,
+The entire homepage (hero, directions grid, before/after gallery, reviews, about, booking form,
 map, footer) lives in one file: `src/routes/index.tsx`. There are no separate section/page
-components — content arrays (`services`, `pricing`, `reviews`) and the `BookingForm` /
+components — content arrays (`directions`, `services` for the booking select, `reviews`) and the `BookingForm` /
 `BeforeAfter` components are defined inline in that file. Other public pages are
 `src/routes/privacy.tsx` (privacy policy for the booking form's personal data),
 `src/routes/trucks.tsx` (truck repair), `src/routes/moto.tsx` (motorcycle detailing),
