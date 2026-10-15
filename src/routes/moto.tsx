@@ -9,6 +9,7 @@ import {
   Car,
   MessageCircle,
 } from "lucide-react";
+import { LatePolicy } from "@/components/late-policy";
 import { ADDRESS, MANAGER_PHONE } from "@/lib/business-info";
 
 export const Route = createFileRoute("/moto")({
@@ -118,6 +119,10 @@ function MotoPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-24">
+        <LatePolicy />
       </section>
 
       <section className="border-t border-border bg-graphite/40">

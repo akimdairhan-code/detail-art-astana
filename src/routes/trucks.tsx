@@ -13,6 +13,7 @@ import {
   MessageCircle,
   type LucideIcon,
 } from "lucide-react";
+import { LatePolicy } from "@/components/late-policy";
 import { MANAGER_PHONE } from "@/lib/business-info";
 import truckImg from "@/assets/truck-hero.jpg";
 
@@ -163,6 +164,10 @@ function TrucksPage() {
             <WorkCard key={item.title} {...item} />
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-24">
+        <LatePolicy />
       </section>
 
       <section className="border-t border-border bg-graphite/40">

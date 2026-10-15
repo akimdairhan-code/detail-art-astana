@@ -11,6 +11,7 @@ import {
   Sun,
   MessageCircle,
 } from "lucide-react";
+import { LatePolicy } from "@/components/late-policy";
 import { ADDRESS, MANAGER_PHONE } from "@/lib/business-info";
 import workshopImg from "@/assets/metal-workshop.jpg";
 
@@ -179,6 +180,10 @@ function MetalWorkshopPage() {
             </ol>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pt-16">
+        <LatePolicy />
       </section>
 
       <section>

@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Check, MessageCircle } from "lucide-react";
+import { LatePolicy } from "@/components/late-policy";
 import { MANAGER_PHONE } from "@/lib/business-info";
 import { getServicePage, SERVICE_PAGES, type ServiceFacts } from "@/lib/services";
 
@@ -116,6 +117,7 @@ function ServicePageView() {
             >
               <MessageCircle className="h-4 w-4" /> Написать в WhatsApp
             </a>
+            <LatePolicy className="mt-6" />
           </aside>
         </section>
 
