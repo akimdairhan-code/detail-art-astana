@@ -46,7 +46,7 @@ error-boundary components) — never create `src/pages/` or Next.js/Remix-style 
 file-based routing conventions (dynamic `$id`, optional `{-$category}`, splat `$.tsx`, `_layout.tsx`).
 
 The entire homepage (hero, directions grid, before/after gallery, reviews, about, booking form,
-map, footer) lives in one file: `src/routes/index.tsx`. There are no separate section/page
+map) lives in one file: `src/routes/index.tsx`. There are no separate section/page
 components — content arrays (`directions`, `services` for the booking select, `reviews`) and the `BookingForm` /
 `BeforeAfter` components are defined inline in that file. Other public pages are
 `src/routes/privacy.tsx` (privacy policy for the booking form's personal data),
@@ -59,7 +59,8 @@ components — content arrays (`directions`, `services` for the booking select, 
 **Site header**: `src/components/site-header.tsx` (logo, section nav with the services dropdown,
 burger menu) is rendered once by `__root.tsx` for every route except `/admin`, so new pages get
 it automatically — don't add a page-level header. Its links use absolute `/#section` hashes so
-they work from any page.
+they work from any page. `src/components/site-footer.tsx` is rendered the same way after every page —
+don't add a page-level footer.
 
 **Business info**: `src/lib/business-info.ts` is the single source for contact and location data —
 phone, WhatsApp link, address, working hours, 2GIS widget/org id, route links, social links and the

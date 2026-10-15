@@ -208,17 +208,6 @@ function SprinterTuningPage() {
           </a>
         </div>
       </section>
-
-      <footer className="border-t border-border bg-graphite/50">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-display text-xl tracking-widest">
-            APELSIN<span className="text-primary">.</span>DETAILING
-          </p>
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Apelsin Industrial Park. Часть комплекса Apelsin Detailing.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

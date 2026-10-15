@@ -13,6 +13,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { SiteHeader } from "../components/site-header";
+import { SiteFooter } from "../components/site-footer";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { YM_COUNTER_ID, isAdminPath, metrikaSnippet, trackPageView } from "../lib/analytics";
 
@@ -129,12 +130,14 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // The staff CRM has its own header; every public page, including new ones, gets the site header.
+  // The staff CRM has its own header; every public page, including new ones, gets the site header
+  // and footer.
   return (
     <QueryClientProvider client={queryClient}>
       {!isAdminPath(pathname) && <SiteHeader />}
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      {!isAdminPath(pathname) && <SiteFooter />}
       <MetrikaPageViews />
     </QueryClientProvider>
   );
