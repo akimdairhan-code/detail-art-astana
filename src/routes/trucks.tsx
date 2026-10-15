@@ -7,7 +7,11 @@ import {
   Cog,
   Flame,
   Zap,
+  Timer,
+  Hammer,
+  Truck,
   MessageCircle,
+  type LucideIcon,
 } from "lucide-react";
 import { MANAGER_PHONE } from "@/lib/business-info";
 import truckImg from "@/assets/truck-hero.jpg";
@@ -27,6 +31,26 @@ export const Route = createFileRoute("/trucks")({
 });
 
 const TRUCK_WHATSAPP = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent("Здравствуйте! Хочу записаться на ремонт грузового авто")}`;
+
+// The three directions are confirmed by the company; the card texts are neutral copy written for
+// the site and make no promises about timing or prices (see "Content reliability" in CLAUDE.md).
+const directions = [
+  {
+    icon: Timer,
+    title: "Краткосрочные ремонты",
+    text: "Быстрое устранение неисправностей, из-за которых машина стоит: замена узлов и расходников, мелкий ремонт — чтобы техника как можно скорее вернулась в рейс.",
+  },
+  {
+    icon: Hammer,
+    title: "Капитальный ремонт грузовой техники",
+    text: "Восстановление двигателя, коробки передач, мостов и других основных агрегатов — для техники с большим пробегом или после серьёзной поломки.",
+  },
+  {
+    icon: Truck,
+    title: "Переоборудование грузовой техники",
+    text: "Доработка машины под ваши задачи: установка дополнительного оборудования, изменение кузова и надстроек.",
+  },
+];
 
 const repairs = [
   {
@@ -65,6 +89,20 @@ const repairs = [
     text: "Диагностика и ремонт проводки, генератора, стартера, освещения и бортовой электроники — от короткого замыкания до перепрошивки блоков управления.",
   },
 ];
+
+function WorkCard({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
+  return (
+    <article className="surface-panel group rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.02] hover:border-primary hover:shadow-[var(--shadow-panel)]">
+      <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+        <Icon className="h-6 w-6 transition-transform duration-300 group-hover:rotate-6" />
+      </div>
+      <h3 className="mt-5 text-2xl transition-colors duration-300 group-hover:text-primary">
+        {title}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+    </article>
+  );
+}
 
 function TrucksPage() {
   return (
@@ -108,22 +146,21 @@ function TrucksPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-24">
+        <p className="eyebrow">Направления</p>
+        <h2 className="mt-3 text-4xl sm:text-5xl">Грузовой сервис</h2>
+        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {directions.map((item) => (
+            <WorkCard key={item.title} {...item} />
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-24">
         <p className="eyebrow">Виды работ</p>
         <h2 className="mt-3 text-4xl sm:text-5xl">Что делаем в боксах</h2>
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {repairs.map(({ icon: Icon, title, text }) => (
-            <article
-              key={title}
-              className="surface-panel group rounded-lg p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.02] hover:border-primary hover:shadow-[var(--shadow-panel)]"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded bg-graphite text-primary transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
-                <Icon className="h-6 w-6 transition-transform duration-300 group-hover:rotate-6" />
-              </div>
-              <h3 className="mt-5 text-2xl transition-colors duration-300 group-hover:text-primary">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
-            </article>
+          {repairs.map((item) => (
+            <WorkCard key={item.title} {...item} />
           ))}
         </div>
       </section>
