@@ -24,7 +24,6 @@ const FACT_LABELS: [keyof ServiceFacts, string][] = [
   ["price", "Стоимость"],
   ["duration", "Срок работ"],
   ["warranty", "Гарантия"],
-  ["materials", "Материалы"],
 ];
 
 function ServicePageView() {

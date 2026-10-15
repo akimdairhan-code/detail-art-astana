@@ -9,7 +9,6 @@ export type ServiceFacts = {
   price: string | null;
   duration: string | null;
   warranty: string | null;
-  materials: string | null;
 };
 
 export type ServicePage = {
@@ -23,7 +22,7 @@ export type ServicePage = {
   facts: ServiceFacts;
 };
 
-const UNCONFIRMED: ServiceFacts = { price: null, duration: null, warranty: null, materials: null };
+const UNCONFIRMED: ServiceFacts = { price: null, duration: null, warranty: null };
 
 export const SERVICE_PAGES: ServicePage[] = [
   {
