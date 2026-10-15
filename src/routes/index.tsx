@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "@/assets/hero-car.webp";
+import heroVideo from "@/assets/gelik.webm";
 import apelsinLogo from "@/assets/apelsin-logo.webp";
 import beforePaint from "@/assets/before-paint.jpg";
 import afterPaint from "@/assets/after-paint.jpg";
@@ -456,6 +457,53 @@ function BookingForm() {
   );
 }
 
+// Portrait media: full-bleed on mobile, beside the text on desktop. `lighten` drops the dark
+// backdrop so only the lit car shows, and the mask fades the rest.
+const HERO_MEDIA_CLASS =
+  "absolute inset-y-0 right-0 h-full w-full object-cover object-[50%_60%] opacity-60 mix-blend-lighten [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_60%,transparent)] lg:right-[max(4%,calc(50%-40rem))] lg:w-[55%] lg:max-w-[50rem] lg:opacity-100 lg:[mask-image:radial-gradient(closest-side_at_50%_55%,black_60%,transparent)]";
+
+// Hero background video: plays once when the preloader is gone (`play`) and stays on its last
+// frame — no loop, no controls. Browsers that can't decode WebM/VP9 (older Safari) fall back to the
+// still photo.
+function HeroVideo({ play }: { play: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [failed, setFailed] = useState(false);
+
+  // The <source> error can fire before hydration, so also check support up front.
+  useEffect(() => {
+    if (!ref.current?.canPlayType('video/webm; codecs="vp9"')) setFailed(true);
+  }, []);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!play || !video) return;
+    // play() waits for enough data on its own; a rejection means autoplay is blocked, and the
+    // video then just stays on its first frame.
+    video.play().catch(() => {});
+  }, [play]);
+
+  if (failed) {
+    return <img src={heroImg} alt="" width={1179} height={2564} className={HERO_MEDIA_CLASS} />;
+  }
+
+  return (
+    <video
+      ref={ref}
+      muted
+      playsInline
+      preload="auto"
+      disablePictureInPicture
+      aria-hidden="true"
+      tabIndex={-1}
+      width={1080}
+      height={2352}
+      className={`pointer-events-none ${HERO_MEDIA_CLASS}`}
+    >
+      <source src={heroVideo} type="video/webm" onError={() => setFailed(true)} />
+    </video>
+  );
+}
+
 function Index() {
   const [ready, setReady] = useState(false);
 
@@ -475,16 +523,7 @@ function Index() {
         Реклама
       </div>
       <section id="top" className="relative isolate overflow-hidden bg-background">
-        {/* Portrait photo: full-bleed on mobile, beside the text on desktop. `lighten` drops the
-            photo's own dark backdrop so only the lit car shows, and the mask fades the rest. */}
-        <img
-          src={heroImg}
-          alt=""
-          width={1179}
-          height={2564}
-          fetchPriority="high"
-          className="absolute inset-y-0 right-0 h-full w-full object-cover object-[50%_60%] opacity-60 mix-blend-lighten [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_60%,transparent)] lg:right-[max(4%,calc(50%-40rem))] lg:w-[55%] lg:max-w-[50rem] lg:opacity-100 lg:[mask-image:radial-gradient(closest-side_at_50%_55%,black_60%,transparent)]"
-        />
+        <HeroVideo play={ready} />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/25 lg:via-background/40 lg:to-transparent" />
         <div className="relative mx-auto max-w-6xl px-4 py-28 sm:py-36">
           <p
